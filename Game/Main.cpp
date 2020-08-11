@@ -1,52 +1,51 @@
-// Game.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+#include "pch.h"
 #include "Graphics/Texture.h"
-#include <iostream>
+#include "Graphics/Renderer.h"
 #include <SDL_image.h>
-#include <SDL.h>
+#include "InputSystem.h"
+#include "Resources/ResourceManager.h"
+#include "Core/time.h"
+#include "Math/Math.h"
+
+nc::Renderer renderer;
+nc::ResourceManager resourceManager;
+nc::InputSystem inputSystem;
+nc::FrameTimer timer;
+
+namespace nc
+{
+using clock = std::chrono::high_resolution_clock;
+using clock_duration = std::chrono::duration<clock::rep, std::nano>;
+}
 
 int main(int, char**)
 {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
-	{
-		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
-		return 1;
-	}
+	/*nc::Timer timer;
+	for (size_t i = 0; i < 1000; i++) { std::sqrt(rand() & 100); }
+
+	std::cout << timer.ElapsedTicks() << std::endl;
+	std::cout << timer.ElapsedSeconds() << std::endl;*/
+
+	renderer.Startup();
+	resourceManager.Startup();
+	inputSystem.Startup();
+	renderer.Create("GAT150 - Game", 800, 600);
 
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 
-	SDL_Window* window = SDL_CreateWindow("GAT150", 100, 100, 800, 600, SDL_WINDOW_SHOWN);
-	if (window == nullptr) {
-		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-		IMG_Quit();
-		SDL_Quit();
-		return 1;
-	}
+	nc::Texture* background = resourceManager.Get<nc::Texture>("background.png", &renderer);
+	nc::Texture* car = resourceManager.Get<nc::Texture>("cars.png", &renderer);
 
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	if (renderer == nullptr)
-	{
-		std::cout << "ERROR: " << SDL_GetError() << std::endl;
-		IMG_Quit();
-		SDL_Quit();
-		return 1;
-	}
-	int width = 128;
-	int height = 128;
-	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, width, height);
-	Uint32* pixels = new Uint32[width * height]; // Uint32 (r,g,b,a) (8,8,8,8)
-	memset(pixels, 255, width * height * sizeof(Uint32)); //(255,255,255,255) (255,255,255,255)
-	SDL_UpdateTexture(texture, NULL, pixels, width * sizeof(Uint32));
-
-	nc::Texture texture2;
-	texture2.Create("sf2.png", renderer);
+	nc::Vector2 position{ 400,300 };
 	float angle{ 0 };
+	nc::Vector2 velocity{ 0,0 };
 
 	SDL_Event event;
 	bool quit = false;
 	while (!quit)
 	{
 		SDL_PollEvent(&event);
+		inputSystem.Update();
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -54,27 +53,46 @@ int main(int, char**)
 			break;
 		}
 
-		SDL_SetRenderDrawColor(renderer, 55, 55, 55, 255);
-		SDL_RenderClear(renderer);
+		//Update
+		timer.Tick();
+		resourceManager.Update();
+		renderer.BeginFrame();
+		quit = (inputSystem.GetButtonState(SDL_SCANCODE_ESCAPE) == nc::InputSystem::eButtonState::PRESSED);
+
+		//player controller
+		if (inputSystem.GetButtonState(SDL_SCANCODE_A) == nc::InputSystem::eButtonState::HELD)
+		{
+			angle = angle - 200.0f * timer.DeltaTime();
+		}
+		if (inputSystem.GetButtonState(SDL_SCANCODE_D) == nc::InputSystem::eButtonState::HELD)
+		{
+			angle = angle + 200.0f * timer.DeltaTime();
+		}
+		//physics
+		nc::Vector2 force{ 0,0 };
+		if (inputSystem.GetButtonState(SDL_SCANCODE_W) == nc::InputSystem::eButtonState::HELD)
+		{
+			force = nc::Vector2::forward * 1000.0f;
+		}
+		force = nc::Vector2::Rotate(force, nc::DegreesToRadians(angle));
+		velocity = velocity + force * timer.DeltaTime();
+		velocity = velocity * 0.93f;
+		position = position + velocity * timer.DeltaTime();
+
+
 
 		//draw
+		renderer.BeginFrame();
+		background->Draw({ 0, 0 });
 
-		for (int i = 0; i < width * height; i++)
-		{
-			Uint8 c1 = rand() % 256;
-			Uint8 c2 = rand() % 256;
-			Uint8 c3 = rand() % 256;
-			pixels[i] = (c1 << 24 | c2 << 16 | c3 << 8);
-		}
-		SDL_UpdateTexture(texture, NULL, pixels, width * sizeof(Uint32));
-		SDL_Rect rect = { 20,20,50,100 };
-		SDL_RenderCopy(renderer, texture, nullptr, &rect);
-		angle+= 1;
-		texture2.Draw({ 500, 100 }, { 2,2 }, angle);
+		//Player sprite draw
+		car->Draw({64,110,60,112}, position, { 1,1 }, angle);
 
-		SDL_RenderPresent(renderer);
+		renderer.EndFrame();
 	}
 	IMG_Quit();
+	resourceManager.Shutdown();
+	inputSystem.Shutdown();
 	SDL_Quit();
 
 	return 0;

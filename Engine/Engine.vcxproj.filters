@@ -21,6 +21,15 @@
     <Filter Include="Resources">
       <UniqueIdentifier>{6753e0f2-8be3-4561-80c9-e8206c594b93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{128606ae-f8ad-431a-ac91-18f1f77a9488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{a0b6a1a4-10e5-4f71-b18b-6dbf8b12ef7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{3924910c-e127-4196-b9b0-81299d246ce5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -59,6 +68,24 @@
     <ClInclude Include="Resources\Resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\ResourceManager.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Renderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSystem.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\time.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Object.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\GameObject.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -78,6 +105,21 @@
     </ClCompile>
     <ClCompile Include="System.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceManager.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Renderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSystem.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\time.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\GameObject.cpp">
+      <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
