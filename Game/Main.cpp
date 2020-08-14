@@ -1,16 +1,17 @@
+/*
+Note:
+Escape key uses held instead of pressed
+*/
 #include "pch.h"
 #include "Graphics/Texture.h"
-#include "Graphics/Renderer.h"
-#include <SDL_image.h>
-#include "InputSystem.h"
-#include "Resources/ResourceManager.h"
-#include "Core/time.h"
-#include "Math/Math.h"
+#include "Objects/GameObject.h"
+#include "Components/PhysicsComponent.h"
+#include "Components/SpriteComponent.h"
+#include "Components/PlayerComponent.h"
+#include "Core/Json.h"
 
-nc::Renderer renderer;
-nc::ResourceManager resourceManager;
-nc::InputSystem inputSystem;
-nc::FrameTimer timer;
+nc::Engine engine;
+nc::GameObject player;
 
 namespace nc
 {
@@ -20,24 +21,60 @@ using clock_duration = std::chrono::duration<clock::rep, std::nano>;
 
 int main(int, char**)
 {
-	/*nc::Timer timer;
-	for (size_t i = 0; i < 1000; i++) { std::sqrt(rand() & 100); }
+	rapidjson::Document document;
+	nc::json::Load("json.txt", document);
 
-	std::cout << timer.ElapsedTicks() << std::endl;
-	std::cout << timer.ElapsedSeconds() << std::endl;*/
+	std::string str;
+	nc::json::Get(document, "string", str);
+	std::cout << str << std::endl;
 
-	renderer.Startup();
-	resourceManager.Startup();
-	inputSystem.Startup();
-	renderer.Create("GAT150 - Game", 800, 600);
+	bool b;
+	nc::json::Get(document, "bool", b);
+	std::cout << b << std::endl;
+
+	int i1;
+	nc::json::Get(document, "integer1", i1);
+	std::cout << i1 << std::endl;
+
+	int i2;
+	nc::json::Get(document, "integer2", i2);
+	std::cout << i2 << std::endl;
+
+	float f;
+	nc::json::Get(document, "float", f);
+	std::cout << f << std::endl;
+
+	nc::Vector2 v2;
+	nc::json::Get(document, "vector2", v2);
+	std::cout << v2 << std::endl;
+
+	nc::Color color;
+	nc::json::Get(document, "color", color);
+	std::cout << color << std::endl;
+
+
+	engine.Startup();
+	player.Create(&engine);
+	player.m_transform.position = { 400,300 };
+	player.m_transform.angle = 45;
+
+	nc::Component* component;
+	component = new nc::PhysicsComponent;
+	player.AddComponent(component);
+	component->Create();
+
+	component = new nc::SpriteComponent;
+	player.AddComponent(component);
+	component->Create();
+
+	component = new nc::PlayerComponent;
+	player.AddComponent(component);
+	component->Create();
 
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 
-	nc::Texture* background = resourceManager.Get<nc::Texture>("background.png", &renderer);
-	nc::Texture* car = resourceManager.Get<nc::Texture>("cars.png", &renderer);
+	nc::Texture* background = engine.GetSystem<nc::ResourceManager>()->Get<nc::Texture>("background.png", engine.GetSystem<nc::Renderer>());
 
-	nc::Vector2 position{ 400,300 };
-	float angle{ 0 };
 	nc::Vector2 velocity{ 0,0 };
 
 	SDL_Event event;
@@ -45,7 +82,7 @@ int main(int, char**)
 	while (!quit)
 	{
 		SDL_PollEvent(&event);
-		inputSystem.Update();
+		engine.GetSystem<nc::InputSystem>()->Update();
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -54,46 +91,22 @@ int main(int, char**)
 		}
 
 		//Update
-		timer.Tick();
-		resourceManager.Update();
-		renderer.BeginFrame();
-		quit = (inputSystem.GetButtonState(SDL_SCANCODE_ESCAPE) == nc::InputSystem::eButtonState::PRESSED);
-
-		//player controller
-		if (inputSystem.GetButtonState(SDL_SCANCODE_A) == nc::InputSystem::eButtonState::HELD)
+		engine.Update();
+		player.Update();
+		engine.GetSystem<nc::Renderer>()->BeginFrame();
+		if (engine.GetSystem<nc::InputSystem>()->GetButtonState(SDL_SCANCODE_ESCAPE) == nc::InputSystem::eButtonState::HELD)
 		{
-			angle = angle - 200.0f * timer.DeltaTime();
+			quit = true;
 		}
-		if (inputSystem.GetButtonState(SDL_SCANCODE_D) == nc::InputSystem::eButtonState::HELD)
-		{
-			angle = angle + 200.0f * timer.DeltaTime();
-		}
-		//physics
-		nc::Vector2 force{ 0,0 };
-		if (inputSystem.GetButtonState(SDL_SCANCODE_W) == nc::InputSystem::eButtonState::HELD)
-		{
-			force = nc::Vector2::forward * 1000.0f;
-		}
-		force = nc::Vector2::Rotate(force, nc::DegreesToRadians(angle));
-		velocity = velocity + force * timer.DeltaTime();
-		velocity = velocity * 0.93f;
-		position = position + velocity * timer.DeltaTime();
-
-
 
 		//draw
-		renderer.BeginFrame();
+		engine.GetSystem<nc::Renderer>()->BeginFrame();
 		background->Draw({ 0, 0 });
+		player.Draw();
 
-		//Player sprite draw
-		car->Draw({64,110,60,112}, position, { 1,1 }, angle);
-
-		renderer.EndFrame();
+		engine.GetSystem<nc::Renderer>()->EndFrame();
 	}
-	IMG_Quit();
-	resourceManager.Shutdown();
-	inputSystem.Shutdown();
-	SDL_Quit();
+	engine.Shutdown();
 
 	return 0;
 }

@@ -26,5 +26,12 @@ namespace nc
 
 		return stream;
 	}
+	std::ostream& operator<<(std::ostream& stream, const Vector2& v)
+	{
+		stream << v.x << " " << v.y;
+
+		return stream;
+
+	}
 }
 
