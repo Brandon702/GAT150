@@ -12,8 +12,9 @@ namespace nc
 	public:
 		virtual void Create(void* data = nullptr) override;
 		virtual void Destroy() override;
+		void ReadComponents(const rapidjson::Value& value);
 
-		void Read(const rapidjson::Value& value);
+		void Read(const rapidjson::Value& value) override;
 
 		void Update();
 		void Draw();
@@ -28,6 +29,7 @@ namespace nc
 	public:
 		Transform m_transform;
 		Engine* m_engine;
+		std::string m_name;
 	protected:
 		std::vector<Component*> m_componenets;
 	};

@@ -3,22 +3,33 @@
 #include "Graphics/Texture.h"
 #include "Objects/GameObject.h"
 
-void nc::SpriteComponent::Create(void* data)
+namespace nc
 {
-	m_texture = m_owner->m_engine->GetSystem<nc::ResourceManager>()->Get<nc::Texture>("cars.png", m_owner->m_engine->GetSystem<nc::Renderer>());
-}
-
-void nc::SpriteComponent::Destroy()
-{
-
-}
-
-void nc::SpriteComponent::Update()
-{
-
-}
-
-void nc::SpriteComponent::Draw()
-{
-	m_texture->Draw({ 64,110,60,112 }, m_owner->m_transform.position, { 1,1 }, m_owner->m_transform.angle);
+	void nc::SpriteComponent::Create(void* data)
+	{
+		m_owner = static_cast<GameObject*>(data);
+	}
+	
+	void nc::SpriteComponent::Destroy()
+	{
+	
+	}
+	
+	void nc::SpriteComponent::Read(const rapidjson::Value& value)
+	{
+		json::Get(value, "texture", m_textureName);
+		json::Get(value, "origin", m_origin);
+		json::Get(value, "rect", m_rect);
+	}
+	
+	void nc::SpriteComponent::Update()
+	{
+	
+	}
+	
+	void nc::SpriteComponent::Draw()
+	{
+		Texture* texture = m_owner->m_engine->GetSystem<nc::ResourceManager>()->Get<nc::Texture>(m_textureName, m_owner->m_engine->GetSystem<nc::Renderer>());
+		texture->Draw(m_rect, m_owner->m_transform.position, m_owner->m_transform.angle, Vector2::one * m_owner->m_transform.scale, m_origin);
+	}
 }

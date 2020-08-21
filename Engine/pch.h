@@ -10,6 +10,8 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+#include "Core/Assert.h"
+
 #include "Math/Color.h"
 #include "Math/Math.h"
 #include "Math/Random.h"
@@ -26,6 +28,7 @@
 #include <list>
 #include <map>
 #include <chrono>
+#include <cassert>
 #include <iostream>
 
 #endif //PCH_H
