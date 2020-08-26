@@ -1,5 +1,5 @@
 #pragma once
-#include "System.h"
+#include "Core/System.h"
 #include "Resource.h"
 #include <map>
 namespace nc

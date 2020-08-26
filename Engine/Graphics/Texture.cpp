@@ -45,7 +45,7 @@ namespace nc
 	}
 	void Texture::Draw(const SDL_Rect& source, const Vector2& position, float angle, const Vector2& scale, const Vector2& origin)
 	{
-		Vector2 size = GetSize();
+		Vector2 size = { source.w, source.h };
 		size = size * scale;
 
 		Vector2 newPosition = position - (size * origin);

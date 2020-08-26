@@ -1,6 +1,6 @@
 /*
 Note:
-Object Factory
+Factory.h
 */
 #include "pch.h"
 #include "Graphics/Texture.h"
@@ -25,7 +25,7 @@ int main(int, char**)
 	engine.Startup();
 
 	nc::ObjectFactory::Instance().Initialize();
-	nc::ObjectFactory::Instance().Register("PlayerComponent", nc::Object::Instantiate<nc::PlayerComponent>);
+	nc::ObjectFactory::Instance().Register("PlayerComponent", new nc::Creator<nc::PlayerComponent, nc::Object>);
 
 	scene.Create(&engine);
 	rapidjson::Document document;
@@ -37,7 +37,6 @@ int main(int, char**)
 	while (!quit)
 	{
 		SDL_PollEvent(&event);
-		engine.GetSystem<nc::InputSystem>()->Update();
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -48,7 +47,7 @@ int main(int, char**)
 		//Update
 		engine.Update();
 		scene.Update();
-		if (engine.GetSystem<nc::InputSystem>()->GetButtonState(SDL_SCANCODE_ESCAPE) == nc::InputSystem::eButtonState::HELD)
+		if (engine.GetSystem<nc::InputSystem>()->GetButtonState(SDL_SCANCODE_ESCAPE) == nc::InputSystem::eButtonState::PRESSED)
 		{
 			quit = true;
 		}
