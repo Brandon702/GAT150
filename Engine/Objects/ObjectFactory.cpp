@@ -4,6 +4,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/SpriteAnimationComponent.h"
 #include "Components/RigidBodyComponent.h"
+#include "Components/AudioComponent.h"
 
 void nc::ObjectFactoryImpl::Initialize()
 {
@@ -12,4 +13,5 @@ void nc::ObjectFactoryImpl::Initialize()
 	nc::ObjectFactory::Instance().Register("SpriteComponent", new Creator<SpriteComponent, Object>);
 	nc::ObjectFactory::Instance().Register("SpriteAnimationComponent", new Creator<SpriteAnimationComponent, Object>);
 	nc::ObjectFactory::Instance().Register("RigidBodyComponent", new Creator<RigidBodyComponent, Object>);
+	nc::ObjectFactory::Instance().Register("AudioComponent", new Creator<AudioComponent, Object>);
 }

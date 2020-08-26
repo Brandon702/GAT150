@@ -6,6 +6,7 @@
 #include "Physics/PhysicsSystem.h"
 #include "Input/InputSystem.h"
 #include "Physics/PhysicsSystem.h"
+#include "Audio/AudioSystem.h"
 #include <vector>
 
 namespace nc

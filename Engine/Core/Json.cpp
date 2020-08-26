@@ -7,6 +7,7 @@ namespace nc
 	bool nc::json::Load(const std::string& filename, rapidjson::Document& document)
 	{
 		bool success = false;
+
 		std::ifstream stream(filename);
 		ASSERT_MSG(stream.good(), ("Error file not loaded: " + filename)); //Debug Mode
 		if (stream.is_open())
@@ -14,6 +15,7 @@ namespace nc
 			rapidjson::IStreamWrapper istream(stream);
 			document.ParseStream(istream);
 			success = document.IsObject();
+			ASSERT_MSG(success, ("Error invalid json file: " + filename));
 		}
 		return success;
 

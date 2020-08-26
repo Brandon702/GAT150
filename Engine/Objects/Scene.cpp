@@ -42,7 +42,7 @@ namespace nc
 			const rapidjson::Value& objectValue = value[i];
 			if (objectValue.IsObject())
 			{
-				std::string typeName;
+				std::string typeName; 
 				json::Get(objectValue, "type", typeName);
 				nc::GameObject* gameObject = ObjectFactory::Instance().Create<GameObject>(typeName);
 
@@ -50,7 +50,7 @@ namespace nc
 				{
 					gameObject->Create(m_engine);
 					gameObject->Read(objectValue);
-
+					std::cout << gameObject->m_name << std::endl;
 					AddGameObject(gameObject);
 				}
 			}
@@ -72,7 +72,7 @@ namespace nc
 				{
 					gameObject->Create(m_engine);
 					gameObject->Read(objectValue);
-
+					std::cout << gameObject->m_name << std::endl;
 					ObjectFactory::Instance().Register(gameObject->m_name, new Prototype<Object>(gameObject));
 				}
 			}
