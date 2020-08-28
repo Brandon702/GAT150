@@ -14,11 +14,50 @@
 			"Components":[
 				{
 					"type":"SpriteAnimationComponent",
-					"texture":"explosion.png",
+					"texture":"textures/explosion.png",
 					"numX":5,
 					"numY":5,
 					"numFrames":25,
 					"fps":30
+				}
+			]
+		},
+		{
+			"type":"GameObject",
+			"name":"ProtoCoin",
+			"tag": "Coin",
+			"transient":false,
+			"position":[
+				0,
+				0
+			],
+			"scale":1,
+			"angle":0,
+			"Components":[
+				{
+					"type":"SpriteAnimationComponent",
+					"texture":"textures/coin.png",
+					"origin":[
+						0.5,
+						0.5
+					],
+					"numX":8,
+					"numY":1,
+					"numFrames":8,
+					"fps":30
+				},
+				{
+					"type":"RigidBodyComponent",
+					"isDynamic":false,
+					"isSensor":true,
+					"lockAngle":true,
+					"size":[
+						16,
+						16
+					],
+					"density":1,
+					"friction":1,
+					"restitution":0.0
 				}
 			]
 		},
@@ -35,7 +74,7 @@
 				{
 					"type":"SpriteComponent",
 					"z":1,
-					"texture":"cars.png",
+					"texture":"textures/cars.png",
 					"origin":[
 						0.5,
 						0.5
@@ -61,7 +100,7 @@
 			"Components":[
 				{
 					"type":"SpriteComponent",
-					"texture":"box.png",
+					"texture":"textures/crate.png",
 					"origin":[
 						0.5,
 						0.5
@@ -89,9 +128,36 @@
 		}
 	],
 	"GameObjects":[
+	{
+			"type":"GameObject",
+			"name":"Background",
+			"position":[
+				0,
+				-75
+			],
+			"scale":1,
+			"angle":0,
+			"Components":[
+				{
+					"type":"SpriteComponent",
+					"texture":"textures/forest.png",
+					"origin":[
+						0.0,
+						0.0
+					],
+					"rect":[
+						0,
+						0,
+						800,
+						600
+					]
+				}
+			]
+		},
 		{
 			"type":"GameObject",
 			"name":"Ground",
+			"tag": "Floor",
 			"position":[
 				400,
 				500
@@ -101,10 +167,10 @@
 			"Components":[
 				{
 					"type":"SpriteComponent",
-					"texture":"ground.png",
+					"texture":"textures/ground.png",
 					"origin":[
 						0.5,
-						0.5
+						1.45
 					],
 					"rect":[
 						0,
@@ -122,7 +188,7 @@
 						16
 					],
 					"density":1,
-					"friction":1,
+					"friction":4,
 					"restitution":0.0
 				}
 			]
@@ -154,7 +220,7 @@
 				},
 				{
 					"type":"SpriteComponent",
-					"texture":"player.png",
+					"texture":"textures/player.png",
 					"origin":[
 						0.5,
 						0.5
@@ -168,7 +234,7 @@
 				},
 				{
 					"type":"AudioComponent",
-					"sound":"jump.wav",
+					"sound":"audio/jump.wav",
 					"playOnAwake":true,
 					"loop":false
 				}
