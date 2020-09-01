@@ -3,6 +3,7 @@
 #include "Components/Component.h"
 #include "Components/RenderComponent.h"
 #include "ObjectFactory.h"
+#include "Scene.h"
 
 namespace nc
 {
@@ -15,6 +16,7 @@ namespace nc
 
 		m_transform = other.m_transform;
 		m_engine = other.m_engine;
+		m_scene = other.m_scene;
 
 		for (auto component : other.m_componenets)
 		{
@@ -25,7 +27,8 @@ namespace nc
 	}
 	void GameObject::Create(void* data)
 	{
-		m_engine = static_cast<Engine*>(data);
+		m_scene = static_cast<Scene*>(data);
+		m_engine = m_scene->m_engine;
 	}
 
 	void GameObject::Destroy()
@@ -106,11 +109,25 @@ namespace nc
 	void GameObject::BeginContact(GameObject* other)
 	{
 		m_contacts.push_back(other);
+
+		Event event;
+		event.sender = other;
+		event.reciever = this;
+		event.type = "CollsionEnter";
+
+		EventManager::Instance().Notify(event);
 	}
 
 	void GameObject::EndContact(GameObject* other)
 	{
 		m_contacts.remove(other);
+
+		Event event;
+		event.sender = other;
+		event.reciever = this;
+		event.type = "CollsionExit";
+
+		EventManager::Instance().Notify(event);
 	}
 
 	std::vector<GameObject*> GameObject::GetContactsWithTag(const std::string& tag)
